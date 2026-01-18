@@ -1,0 +1,65 @@
+
+        // --- 3. Typing Engine ---
+        const roles = ["SYSTEM ARCHITECT", "CLOUD EXPLORER", "AI ENGINEER", "TECH MENTOR"];
+        let rI = 0, cI = 0, isDel = false;
+        function type() {
+            const current = roles[rI];
+            const textElement = document.getElementById('typing-text');
+            if (textElement) {
+                textElement.textContent = current.substring(0, cI);
+                if(!isDel && cI < current.length) {
+                    cI++;
+                    setTimeout(type, 150);
+                } else if(isDel && cI > 0) {
+                    cI--;
+                    setTimeout(type, 50);
+                } else {
+                    isDel = !isDel;
+                    if(!isDel) rI = (rI + 1) % roles.length;
+                    setTimeout(type, 1500);
+                }
+            }
+        }
+        type();
+
+        // --- 4. Intersection Observer for Scroll Animations ---
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => { 
+                if(e.isIntersecting) {
+                    e.target.classList.add('active'); 
+                    if(e.target.id) addLog(`Viewing section: ${e.target.id.toUpperCase()}`);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        
+        // --- 5. Navigation & Form Logic ---
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => addLog(link.dataset.log));
+        });
+
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btnText = document.getElementById('btn-text');
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const message = document.getElementById('contact-message').value;
+            
+            addLog(`Transmission protocol: SENDING...`);
+            btnText.textContent = "ESTABLISHING UPLINK...";
+            
+            const recipient = "rishisonims26@gmail.com";
+            const subject = encodeURIComponent(`Portfolio Inquiry from ${name}`);
+            const body = encodeURIComponent(`Sender Name: ${name}\nSender Email: ${email}\n\nMessage:\n${message}`);
+            
+            setTimeout(() => {
+                window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
+                addLog(`Transmission protocol: SUCCESS`);
+                btnText.textContent = "TRANSMISSION SENT";
+            }, 1000);
+        });
+
+        document.getElementById('menu-btn')?.addEventListener('click', () => {
+            document.querySelector('nav div div:nth-child(2)')?.classList.toggle('hidden');
+            addLog("Mobile menu toggled");
+        });
